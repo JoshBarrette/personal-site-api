@@ -1,0 +1,6 @@
+{
+  "TableName": "PersonalViewsTable",
+  "KeySchema": [{ "AttributeName": "IP", "KeyType": "HASH" }],
+  "AttributeDefinitions": [{ "AttributeName": "IP", "AttributeType": "S" }],
+  "BillingMode": "PAY_PER_REQUEST"
+}

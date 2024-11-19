@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: API for my personal site
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref PersonalViewsTable
+
+Resources:
+  API:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+
+  PersonalViewsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PersonalViewsTable
+      AttributeDefinitions:
+        - AttributeName: IP
+          AttributeType: S
+      KeySchema:
+        - AttributeName: IP
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  GetCount:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs20.x
+      Handler: getCount.handler
+      CodeUri: ./src/
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        GetCountEvent:
+          Type: Api
+          Properties:
+            Path: /api
+            Method: GET
+            RestApiId: !Ref API
+
+  UpdateCount:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs20.x
+      Handler: updateCount.handler
+      CodeUri: ./src/
+      Policies: AmazonDynamoDBFullAccess          
+      Events:
+        GetCountEvent:
+          Type: Api
+          Properties:
+            Path: /api
+            Method: POST
+            RestApiId: !Ref API

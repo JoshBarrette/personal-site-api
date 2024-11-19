@@ -1,0 +1,18 @@
+{
+  "name": "personal-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "api": "sam build && sam local start-api",
+    "createTable": "aws dynamodb create-table --cli-input-json file://json/table.json --endpoint-url http://localhost:8000",
+    "listTables": "aws dynamodb list-tables --endpoint-url http://localhost:8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.693.0",
+    "@aws-sdk/lib-dynamodb": "^3.693.0"
+  }
+}
