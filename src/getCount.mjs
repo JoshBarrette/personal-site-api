@@ -16,8 +16,55 @@ export const handler = async (event, context, callback) => {
     })
     .catch((e) => console.log(e));
 
-  callback(null, {
-    statusCode: 200,
-    body: JSON.stringify({ count: value }),
+  if (!event.headers["X-Forwarded-For"]) {
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ count: value }),
+    };
+    return;
+  }
+  const requesterIP = event.headers["X-Forwarded-For"].split(",")[0];
+
+  const checker = await dynamo.get({
+    TableName: process.env.TABLE_NAME,
+    Key: { IP: requesterIP },
   });
+
+  if (!checker.Item) {
+    await dynamo.put({
+      TableName: process.env.TABLE_NAME,
+      Item: {
+        IP: requesterIP,
+      },
+    });
+
+    dynamo.update({
+      TableName: process.env.TABLE_NAME,
+      Key: { IP: "Count" },
+      ExpressionAttributeValues: { ":increment": 1 },
+      ExpressionAttributeNames: { "#value": "value" },
+      UpdateExpression: "ADD #value :increment",
+    });
+
+    console.log("Incrementing count:", value);
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ count: value + 1 }),
+    };
+  }
+
+  console.log("Not incrementing count:", value);
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ count: value }),
+  };
 };

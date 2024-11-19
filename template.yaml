@@ -42,17 +42,17 @@ Resources:
             Method: GET
             RestApiId: !Ref API
 
-  UpdateCount:
-    Type: AWS::Serverless::Function
-    Properties:
-      Runtime: nodejs20.x
-      Handler: updateCount.handler
-      CodeUri: ./src/
-      Policies: AmazonDynamoDBFullAccess          
-      Events:
-        GetCountEvent:
-          Type: Api
-          Properties:
-            Path: /api
-            Method: POST
-            RestApiId: !Ref API
+  # UpdateCount:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     Runtime: nodejs20.x
+  #     Handler: updateCount.handler
+  #     CodeUri: ./src/
+  #     Policies: AmazonDynamoDBFullAccess          
+  #     Events:
+  #       GetCountEvent:
+  #         Type: Api
+  #         Properties:
+  #           Path: /api
+  #           Method: POST
+  #           RestApiId: !Ref API
